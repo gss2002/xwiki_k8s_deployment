@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+  "-//Hibernate/Hibernate Configuration DTD//EN"
+  "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.use_outer_join">true</property>
+		<property name="hibernate.jdbc.use_scrollable_resultset">false</property>
+		<property name="connection.datasource">java:/comp/env/jdbc/XWikiDS</property>
+		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="jdbc.use_streams_for_binary">false</property>
+		<property name="xwiki.virtual_mode">schema</property>
+		<property name="hibernate.connection.charSet">UTF-8</property>
+		<property name="hibernate.connection.useUnicode">true</property>
+		<property name="hibernate.connection.characterEncoding">utf8</property>
+		<mapping resource="xwiki.postgresql.hbm.xml"/>
+		<mapping resource="feeds.hbm.xml"/>
+		<mapping resource="instance.hbm.xml"/>
+		<mapping resource="notification-filter-preferences.hbm.xml"/>
+		<mapping resource="mailsender.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>

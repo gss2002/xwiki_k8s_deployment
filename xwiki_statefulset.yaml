@@ -1,0 +1,105 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xwiki
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: wiki.k8s.senia.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: tomcat-xwiki
+            port:
+              number: 8080
+        path: /xwiki/
+        pathType: Prefix
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: xwiki-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-xwiki
+spec:
+  selector:
+    app: tomcat-xwiki
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tomcat-xwiki
+spec:
+  selector:
+    matchLabels:
+      app: tomcat-xwiki
+  serviceName: "tomcat-xwiki"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tomcat-xwiki
+    spec:
+      containers:
+      - name: tomcat-xwiki
+        image: registry.devops.senia.org/k8s/images/tomcat-xwiki:12.10.11.2
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+        - name: xwiki-data
+          mountPath: /var/local/xwiki/data
+        - name: confcontext
+          mountPath: /opt/tomcat/conf/context.xml
+          subPath: context.xml
+        - name: confhibernate
+          mountPath: /opt/tomcat/webapps/xwiki/WEB-INF/hibernate.cfg.xml
+          subPath: hibernate.cfg.xml
+        - name: webinf
+          mountPath: /opt/tomcat/webapps/xwiki/WEB-INF/xwiki.properties
+          subPath: xwiki.properties
+        - name: webinf
+          mountPath: /opt/tomcat/webapps/xwiki/WEB-INF/xwiki.cfg
+          subPath: xwiki.cfg
+      imagePullSecrets:
+      - name: registry-devops-senia
+      volumes:
+      - name: xwiki-data
+        persistentVolumeClaim:
+          claimName: xwiki-data
+      - name: confcontext
+        configMap:
+          name: tomcat-xwiki-context
+          items:
+          - key: context.xml
+            path: context.xml
+      - name: confhibernate
+        configMap:
+          name: tomcat-xwiki-hibernate
+          items:
+          - key: hibernate.cfg.xml
+            path: hibernate.cfg.xml
+      - name: webinf
+        configMap:
+          name: tomcat-xwiki-props
+          items:
+          - key: xwiki.cfg
+            path: xwiki.cfg
+          - key: xwiki.properties
+            path: xwiki.properties

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Context>
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<WatchedResource>WEB-INF/tomcat-web.xml</WatchedResource>
+	<WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+	<Resources cacheMaxSize="100000" cachingAllowed="true"/>
+	<Resource auth="Container" defaultAutoCommit="false" driverClassName="org.postgresql.Driver" logAbandoned="true" maxActive="100" maxIdle="10" maxWait="-1" minIdle="5" name="jdbc/XWikiDS" password="PassWordGoesHere" removeAbandoned="true" removeAbandonedTimeout="60" testOnBorrow="true" testOnReturn="true" type="javax.sql.DataSource" url="jdbc:postgresql://pgsql.senia.org:5432/xwiki" username="xwiki" validationQuery="select '1'"/>
+</Context>
